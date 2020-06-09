@@ -41,7 +41,7 @@ class CstrEnv(object):
         self.a_dim = 2
         self.o_dim = 1
 
-        self.x0 = np.array([[0., 2.1404, 1.40, 387.34, 386.06, 14.19, -1113.5]])
+        self.x0 = np.array([[0., 2.1404, 1.20, 387.34, 386.06, 14.19, -1113.5]])
         self.u0 = np.array([[0., 0.]])
         self.t0 = 0.
         self.dt = 20 / 3600.  # h
@@ -51,14 +51,14 @@ class CstrEnv(object):
 
         self.Q = np.diag([10])
         self.R = np.diag([0.01, 0.01])
-        self.H = np.diag([0])
+        self.H = np.diag([10])
 
         self.xmin = np.array([[self.t0, 0.001, 0.001, 353.15, 363.15, 3, -9000]])
-        self.xmax = np.array([[self.tT, 3.5, 1.8, 413.15, 408.15, 35, 0]])
+        self.xmax = np.array([[self.tT, 3.5, 1.4, 413.15, 408.15, 35, 0]])
         self.ymin = np.array([[self.xmin[0, 2]]])
         self.ymax = np.array([[self.xmax[0, 2]]])
-        self.umin = np.array([[-0.1, -10]]) / self.dt
-        self.umax = np.array([[0.1, 10]]) / self.dt
+        self.umin = np.array([[-0.5, -200]]) / self.dt
+        self.umax = np.array([[0.5, 200]]) / self.dt
 
         # partial function: Pre declaration of the Leftmost arguments
         self.dx_eval = self.system_functions
@@ -98,7 +98,7 @@ class CstrEnv(object):
             sol_x = solve_ivp(dx, [t, t + self.dt], xvec, method='LSODA')
             xplus = np.reshape(sol_x.y[:, -1], [1, -1])
 
-            xplus = np.clip(xplus, -1, 1)
+            xplus = np.clip(xplus, -2, 2)
 
             costs = self.c_eval(xplus, u) * self.dt
 
@@ -107,7 +107,7 @@ class CstrEnv(object):
 
         else: # data_type = 'terminal'
             xplus = x
-            costs = self.cT_eval(xplus, u)
+            costs = self.cT_eval(xplus, u) * self.dt
 
             is_term = True # Use consistent dimension [1, 1]
 
@@ -165,7 +165,7 @@ class CstrEnv(object):
         u = self.descale(u, self.umin, self.umax)
 
         x = np.reshape(x, [-1, ])
-        y = x[1]
+        y = x[2]
         y = np.reshape(y, [1, -1])
 
         y = self.scale(y, self.ymin, self.ymax, shift=True)

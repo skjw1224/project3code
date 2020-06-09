@@ -34,7 +34,7 @@ class RBF(object):
 
     def reset_parameters(self):
         centers = np.random.randn(self.out_features, self.in_features)
-        widths = np.random.randn(self.out_features)
+        widths = np.ones([self.out_features, ])
         return centers, widths
 
     def eval_basis(self, input): # (B, x)

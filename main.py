@@ -8,7 +8,7 @@ sys.path.append(my_CSTR)
 from env import CstrEnv
 from actor_critic import ActorCritic
 
-MAX_EPISODE = 1000
+MAX_EPISODE = 3000
 
 # device = 'cuda' if torch.cuda.is_available() else 'cpu'
 # device = 'cuda'
@@ -46,7 +46,7 @@ for epi in range(MAX_EPISODE):
 
     trajectory_n = trajectory
 
-    if epi%50 == 0:
+    if epi%200 == 0:
         np.savetxt(my_CSTR + '/data/trajectory' + str(epi) + '.txt', trajectory_n, newline='\n')
         plt.rc('xtick', labelsize=8)
         plt.rc('ytick', labelsize=8)
